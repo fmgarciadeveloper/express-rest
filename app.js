@@ -19,13 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-console.log('connection => '+process.env.MONGODB_URI);
+//console.log('connection => '+process.env.MONGODB_URI);
 
 /* 
   get home
 */
 app.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: process.env.MONGODB_URI });
 });
 
 app.use('/api', indexRouter);
