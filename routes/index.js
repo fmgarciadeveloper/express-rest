@@ -2,14 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 /* 
-  get home
-*/
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-
-/* 
   receive an object with the terms for a search 
 */
 router.post('/product/search', function(req, res, next) {
@@ -36,7 +28,7 @@ router.get('/product/search-order', function(req, res, next) {
   products associated to the given category. If the category doesn't exists, it must return an error.
 */
 router.get('/product/category/:productCategoryId', function(req, res, next) {
-  res.json({ message: 'receive a categoryId as a query string '+req.params.productCategoryId });   
+  res.json({ message: 'receive a categoryId as a query string : '+req.params.productCategoryId });   
 });
 
 /* 
