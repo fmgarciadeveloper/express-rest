@@ -3,6 +3,23 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}).then(
+  () => { 
+    console.log('conected...');
+    /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ 
+  },
+  err => { 
+    console.log(err);
+    /** handle initial connection error */ 
+  }
+);
+mongoose.Promise = global.Promise
+
+mongoose.connection.on('open', function() {
+  console.log("Connected to Mongoose...");
+});
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,13 +36,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//console.log('connection => '+process.env.MONGODB_URI);
+console.log('connection => '+process.env.MONGODB_URI);
 
 /* 
   get home
 */
 app.get('/', function(req, res, next) {
-  res.render('index', { title: process.env.MONGODB_URI });
+  res.render('index', { title: 'Express' });
 });
 
 app.use('/api', indexRouter);

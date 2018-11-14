@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const AccountModel = require('../models/account');
+
 
 /* 
   receive an object with the terms for a search 
@@ -20,7 +22,20 @@ router.get('/product/search-order/:searchOrderId', function(req, res, next) {
   return a list of the search orders that exists in the database.
 */
 router.get('/product/search-order', function(req, res, next) {
-  res.json({ message: 'return a list of the search orders that exists in the database.' });   
+  /* const newUser = new AccountModel({ username: 'jhon_doe' });
+
+  newUser.save().then(
+    (data) => { 
+      res.json({ data: data });   
+    },
+    err => { 
+      res.json({ message: err });
+    }
+  );   */
+  AccountModel.find({}, function(err, accounts){
+    res.json({ data: accounts }); 
+  });
+  
 });
 
 /* 
