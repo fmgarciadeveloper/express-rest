@@ -1,56 +1,40 @@
 var express = require('express');
 var router = express.Router();
-const AccountModel = require('../models/account');
+const Category = require('../controllers/categories');
+const Search = require('../controllers/searchs');
 
+/* 
+  get home
+*/
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express' });
+});
 
 /* 
   receive an object with the terms for a search 
 */
-router.post('/product/search', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.post('/api/product/search', Search.create);
 
 /*  
   receive a searchOrderId as a query string, and must return a JSON with the
   status of the searchOrder and the results associated to the search order itself. 
 */
-router.get('/product/search-order/:searchOrderId', function(req, res, next) {
-  res.json({ message: 'hooray! welcome to our api!'+req.params.id });   
-});
+router.get('/api/product/search-order/:searchOrderId', Search.findById);
 
 /* 
   return a list of the search orders that exists in the database.
 */
-router.get('/product/search-order', function(req, res, next) {
-  /* const newUser = new AccountModel({ username: 'jhon_doe' });
-
-  newUser.save().then(
-    (data) => { 
-      res.json({ data: data });   
-    },
-    err => { 
-      res.json({ message: err });
-    }
-  );   */
-  AccountModel.find({}, function(err, accounts){
-    res.json({ data: accounts }); 
-  });
-  
-});
+router.get('/api/product/search-order', Search.list);
 
 /* 
   receive a categoryId as a query string, and must return an array with all the
   products associated to the given category. If the category doesn't exists, it must return an error.
 */
-router.get('/product/category/:productCategoryId', function(req, res, next) {
-  res.json({ message: 'receive a categoryId as a query string : '+req.params.productCategoryId });   
-});
+router.get('/api/product/category/:productCategoryId', Category.findById);
 
 /* 
   return a list of categorie that exists in the database.
 */
-router.get('/product/category', function(req, res, next) {
-  res.json({ message: 'return a list of categorie that exists in the database.' });   
-});
+router.get('/api/product/category', Category.list);
 
 module.exports = router;
