@@ -1,1 +1,1 @@
-web: node_modules/.bin/forever ./www
+web: npm start
