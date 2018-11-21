@@ -1,4 +1,5 @@
 const Search = require('../models/search');
+const Product = require('../models/product');
 const amqpConn = require('../rabbitmq');
 
 module.exports.list = function(req, res, next) {
@@ -11,8 +12,23 @@ module.exports.findById = function(req, res, next) {
   
   const id = req.params.searchOrderId;
 
-  Search.findById({id}, function(err, seach){
-    res.json({ data: seach }); 
+  Search.findById({_id: id}, function(err, search){  
+    
+    const result = {
+      search,
+    }
+    
+    if(search){
+      let search_term = search.searchQuery;
+      Product.find({ searchTerm: search_term }, function(err, products){
+        result.products = products;
+        res.json({ data: result }); 
+      });     
+
+    }else{
+      res.json({message:'Search-Order no exists!!!'})
+    }
+    
   });
 };
 

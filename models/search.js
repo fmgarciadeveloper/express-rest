@@ -15,21 +15,3 @@ const searchSchema = new Schema({
 const Search = mongoose.model('Search', searchSchema);
 
 module.exports = Search;
-
-/*
-search		
-_id		key
-searchQuery		string
-provider		string
-options		
-	user	string
-	password	string
-callbackUrl		string
-status		string
-	received	
-	processing	
-	failed	
-	processed	
-	sent	
-
-*/

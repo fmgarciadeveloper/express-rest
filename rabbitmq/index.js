@@ -21,51 +21,77 @@ module.exports = {
 
         channel.assertQueue(queueResult, {durable: false});
         channel.consume(queueResult, function(msg) {
-          message = msg.content.toString();
-          data = JSON.parse(message);
-          console.log('result');
-          console.log(message);
-          const product = new Product({
-            searchTerm: data.searchTerm,
-            product_name: data.product_name,
-            sku: data.sku,
-            price: data.price,
-            price_with_discount: data.price_with_discount,
-            category: data.category,
-            description: data.description,
-            imagesUrl: data.imagesUrl
-          });
+          let message = msg.content.toString();
+          let data = JSON.parse(message);
+          
+          const searchCategory = data[0].category;
 
-          Category.findOne({name: data.category}, function(err, category){
-            if(!category){
-              console.log("not found");
-              const newCatergory = new Category({
-                name: data.category
-              });
-              console.log(newCatergory);
-              newCatergory.save(data).then(
-                (data) => {
-                  console.log(data); 
-                  product.category = data._id;
-                  product.save(product);
-                },
-                (err) => {
-                  console.log(err);
+          Category.findOne({name: searchCategory})
+            .exec()
+            .then((category) => {
+
+              if(!category){     
+              
+                const newCatergory = new Category({
+                  name: searchCategory
+                });
+                
+                newCatergory.save(function (err, newData) {
+                  if (err) return console.log(err);
+                  
+                  for(var i in data) {
+          
+                    const product = new Product({
+                      searchTerm: data[i].searchTerm,
+                      product_name: data[i].product_name,
+                      sku: data[i].sku,
+                      price: data[i].price,
+                      price_with_discount: data[i].price_with_discount,
+                      category: newData._id,
+                      description: data[i].description,
+                      imagesUrl: data[i].imagesUrl
+                    }); 
+                    
+                    product.save(function (err, newProduct) {
+                      if (err) return console.log(err);                  
+                    });
+                  }
+                });                
+  
+              }else{
+                for(var i in data) {
+          
+                  const product = new Product({
+                    searchTerm: data[i].searchTerm,
+                    product_name: data[i].product_name,
+                    sku: data[i].sku,
+                    price: data[i].price,
+                    price_with_discount: data[i].price_with_discount,
+                    category: category._id,
+                    description: data[i].description,
+                    imagesUrl: data[i].imagesUrl
+                  }); 
+                  
+                  product.save(function (err, newProduct) {
+                    if (err) return console.log(err);                  
+                  });
                 }
-              ); 
-            }else{
-              console.log("found");
-              product.category = category._id;
-              product.save(product);
-            }
-          });
+              }
 
+              
+            })
+            .catch((err) => {
+              console.log('error >> ');
+              console.log(err)
+            });
+                    
+          
         }, {noAck: true});
 
         channel.assertQueue(queueStatus, {durable: false});
         channel.consume(queueStatus, function(msg) {
-          message = msg.content.toString();
-          data = JSON.parse(message);
+          let message = msg.content.toString();
+          let data = JSON.parse(message);
           
           Search.findById({_id: data.id}, function (err, search) {
             if (err) return console.log(err);
@@ -73,7 +99,6 @@ module.exports = {
             search.set({ status: data.status});
             search.save(function (err, updatedTank) {
               if (err) return console.log(err);
-              console.log(updatedTank);
             });
           });
           

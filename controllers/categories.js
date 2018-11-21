@@ -2,18 +2,7 @@ const Category = require('../models/category');
 const Product = require('../models/product');
 const ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports.list = function(req, res, next) {
-   /* const newUser = new AccountModel({ username: 'jhon_doe' });
-
-  newUser.save().then(
-    (data) => { 
-      res.json({ data: data });   
-    },
-    err => { 
-      res.json({ message: err });
-    }
-  );   */
- 
+module.exports.list = function(req, res, next) { 
   Category.find({}, function(err, categories){
     res.json({ data: categories }); 
   });
@@ -25,7 +14,7 @@ module.exports.findById = function(req, res, next) {
   console.log(id);
 
   Product.
-    findOne({category : new ObjectId(id)}).
+    find({category : new ObjectId(id)}).
     populate('category').
     exec(function (err, product) {
 
