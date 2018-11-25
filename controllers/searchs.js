@@ -42,7 +42,7 @@ module.exports.create = function(req, res, next) {
       password: req.body.options.password
     },
     callbackUrl: req.body.callbackUrl,
-    status:req.body.status
+    status:req.body.status,
   });  
 
   search.save().then(
@@ -51,6 +51,7 @@ module.exports.create = function(req, res, next) {
         id: data._id,
         searchQuery: data.searchQuery,
         provider: data.provider,
+        iterate:req.body.iterate,
       }
 
       amqpConn.publishSearch(message);

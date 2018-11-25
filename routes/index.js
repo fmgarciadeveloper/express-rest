@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Category = require('../controllers/categories');
 const Search = require('../controllers/searchs');
+const Product = require('../controllers/products');
 
 /* 
   get home
@@ -36,5 +37,10 @@ router.get('/api/product/category/:productCategoryId', Category.findById);
   return a list of categorie that exists in the database.
 */
 router.get('/api/product/category', Category.list);
+
+/* 
+  return a list of products that exists in the database.
+*/
+router.get('/api/product', Product.list);
 
 module.exports = router;
